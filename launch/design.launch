@@ -1,0 +1,8 @@
+<launch>
+ 	<node pkg="footstep_planning_GZF" type="footstep_planning" name="footstep_planning" output="screen">
+    </node>
+
+	<!-- Launch RViz with the demo configuration. -->
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find footstep_planning_GZF)/config/rviz.rviz"/>
+
+</launch>
