@@ -65,7 +65,8 @@
         "/home/lichao/Darwin-op/src/elevation_map_ours/elevation_mapping/tf_inverse/include/**",
         "/home/lichao/Darwin-op/src/elevation_map_ours/elevation_mapping/tilted_rectangle_iterator/include/**",
         "/home/lichao/Darwin-op/src/velodyne_simulator/velodyne_gazebo_plugins/include/**",
-        "/usr/include/**"
+        "/usr/include/**",
+        "/home/lichao/catkin_GZF/src/footstep_planning_GZF/include"
       ],
       "name": "ROS",
       "intelliSenseMode": "gcc-x64",

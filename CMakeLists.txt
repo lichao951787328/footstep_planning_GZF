@@ -3,6 +3,7 @@ project(footstep_planning_GZF)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
+SET(CMAKE_BUILD_TYPE "Debug")
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -14,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   roscpp
   sensor_msgs
+  humanoid_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -138,7 +140,8 @@ include
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/footstep_planning_GZF_node.cpp)
-add_executable(footstep_planning src/main.cpp src/global_plan.cpp)
+add_executable(footstep_planning src/main.cpp src/global_plan.cpp src/footstep_planner.cpp)
+add_executable(global_path_planner_node src/global_path_planner_node.cpp src/global_plan.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -151,6 +154,11 @@ add_executable(footstep_planning src/main.cpp src/global_plan.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(footstep_planning
+  ${catkin_LIBRARIES}
+  glog::glog
+)
+
+target_link_libraries(global_path_planner_node
   ${catkin_LIBRARIES}
   glog::glog
 )

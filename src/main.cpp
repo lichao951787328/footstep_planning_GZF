@@ -6,6 +6,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <nav_msgs/Path.h>
 #include <grid_map_core/iterators/LineIterator.hpp>
+#include <footstep_planning_GZF/footstep_planner.h>
 using namespace std;
 
 int main(int argc, char** argv)
@@ -22,10 +23,41 @@ int main(int argc, char** argv)
     grid_map::GridMapRosConverter::loadFromBag(file_path + "raw_map.bag", rawMap_topic, rawMap);
     grid_map::GridMapRosConverter::loadFromBag(file_path + "feasible_map.bag", feasibleMap_topic, feasibleMap);
 
-    Eigen::Vector3d s(0.1, 0, -10/57.3);
+    Eigen::Vector3d s(0, 0, 0);
     Eigen::Vector3d e(3.5, 0.1, 10/57.3);
+
+    // if (rawMap.isInside(grid_map::Position::Zero()))
+    // {
+    //     cout<<"zero is in map"<<endl;
+    // }
+    // else
+    // {
+    //     cout<<"zero is not in map"<<endl;
+    // }
+    
+    
+    // grid_map::Index zero_index;
+    // if (rawMap.getIndex(grid_map::Position::Zero(), zero_index))
+    // {
+    //     if (rawMap.isValid(zero_index, "elevation"))
+    //     {
+    //         cout<<"zero is valid"<<endl;
+    //     }
+    //     else
+    //     {
+    //         cout<<"zero is not valid"<<endl;
+    //     }
+        
+    // }
+    // else
+    // {
+    //     cout<<"not get index"<<endl;
+    // }
+    
+
     hybridAstar a_star(s, e, rawMap);
     std::vector<Eigen::Vector3d> path;
+    std::vector<Eigen::Vector3d> path_full;
     if (a_star.plan())
     {
         path = a_star.getPath();
@@ -73,6 +105,7 @@ int main(int argc, char** argv)
                         geometry_msgs::PoseStamped tmp_ps;
                         tmp_ps.pose = tmp_p;
                         tmp_path.poses.emplace_back(tmp_ps);
+                        path_full.emplace_back(Eigen::Vector3d(p3.x(), p3.y(), last_pose.z() + index_n * delta));
                     }
                     index_n++;
                 }
@@ -82,6 +115,7 @@ int main(int argc, char** argv)
         }
         else// 插入当前点
         {
+            path_full.emplace_back(p);//获取点
             grid_map::Index index;
             if (rawMap.getIndex(grid_map::Position(p.x(), p.y()), index))
             {
@@ -109,6 +143,19 @@ int main(int argc, char** argv)
         last_pose = p;
     }
 
+    footstep::footStepPlan footstep_planner(feasibleMap, path_full);
+    footstep_planner.setBHRhard(0.35, -2, 4, 0.1, 0.36, 0.02);
+    footstep_planner.CapturePathPlanC();
+    if (footstep_planner.computefootStep())
+    {
+        cout<<"get step success"<<endl;
+    }
+    else
+    {
+        cout<<"get step failed"<<endl;
+    }
+    
+    
 
     grid_map_msgs::GridMap rawMap_msg;
     grid_map::GridMapRosConverter::toMessage(rawMap, rawMap_msg);

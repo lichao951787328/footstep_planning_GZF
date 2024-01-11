@@ -83,9 +83,7 @@ bool hybridAstar::isValid(NodePtr n)
     map_.getIndex(grid_map::Position(n->x, n->y), n_index);
     // LOG(INFO)<<"tmp index: "<<n_index.transpose();
     grid_map::Position3 p3;
-    map_.getPosition3("elevation", n_index, p3);
-    // LOG(INFO)<<"ENTER isValid FUNCTION";
-    return !std::isnan(p3.z());
+    return map_.getPosition3("elevation", n_index, p3);
 }
 
 
